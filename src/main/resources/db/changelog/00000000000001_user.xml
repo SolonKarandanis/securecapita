@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <property name="u_id" value="(uuid())" dbms="mysql"/>
+    <changeSet id="00000000000001-users" author="solonk">
+        <createTable tableName="users">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="public_id" type="varchar(36)" defaultValueComputed="${u_id}">
+                <constraints  nullable="false" unique="true" />
+            </column>
+            <column name="first_name" type="varchar(50)"/>
+            <column name="last_name" type="varchar(50)"/>
+            <column name="email" type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="uq_user_email"/>
+            </column>
+            <column name="username"
+                    type="varchar(255)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="uq_username"/>
+            </column>
+            <column name="password"
+                    type="varchar(200)">
+                <constraints nullable="false" />
+
+            </column>
+            <column name="status"
+                    type="varchar(10)">
+                <constraints nullable="false" />
+            </column>
+            <column name="is_enabled"
+                    type="boolean"
+                    defaultValueBoolean="false">
+            </column>
+            <column name="using_mfa"
+                    type="boolean"
+                    defaultValueBoolean="false">
+            </column>
+            <column name="image_url" type="varchar(256)"/>
+            <column name="created_date" type="datetime"/>
+            <column name="last_modified_date" type="datetime"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="00000000000001-user-details" author="solonk">
+        <createTable tableName="user_details">
+            <column name="user_id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="address" type="varchar(200)"/>
+            <column name="phone" type="varchar(30)"/>
+            <column name="title" type="varchar(50)"/>
+            <column name="bio" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="00000000000001-roles" author="solonk">
+        <createTable tableName="roles">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50)">
+                <constraints  unique="true" nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="user_roles">
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="user_id, role_id" tableName="user_roles"/>
+
+        <addForeignKeyConstraint baseColumnNames="role_id"
+                                 baseTableName="user_roles"
+                                 constraintName="fk_user_roles_roles"
+                                 referencedColumnNames="id"
+                                 referencedTableName="roles"/>
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="user_roles"
+                                 constraintName="fk_user_roles_users"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+
+    <changeSet id="00000000000001-operations" author="solonk">
+        <createTable tableName="operations">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50)">
+                <constraints  unique="true" nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="role_operations">
+            <column name="role_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="operation_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="operation_id, role_id" tableName="role_operations"/>
+
+        <addForeignKeyConstraint baseColumnNames="role_id"
+                                 baseTableName="role_operations"
+                                 constraintName="fk_role_operations_roles"
+                                 referencedColumnNames="id"
+                                 referencedTableName="roles"/>
+
+        <addForeignKeyConstraint baseColumnNames="operation_id"
+                                 baseTableName="role_operations"
+                                 constraintName="fk_role_operations_operations"
+                                 referencedColumnNames="id"
+                                 referencedTableName="operations"/>
+    </changeSet>
+</databaseChangeLog>
