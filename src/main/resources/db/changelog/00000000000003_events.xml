@@ -1,0 +1,52 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="000000000000003-events" author="solon">
+        <createTable tableName="events">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="type" type="varchar(255)" >
+                <constraints  nullable="false" unique="true" />
+            </column>
+            <column name="description" type="varchar(255)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="000000000000003-user-events" author="solon">
+        <createTable tableName="user_events">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="event_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="device" type="varchar(100)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ip_address" type="varchar(100)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_date" type="datetime"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="event_id"
+                                 baseTableName="user_events"
+                                 constraintName="fk_user_events_events"
+                                 referencedColumnNames="id"
+                                 referencedTableName="events"/>
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="user_events"
+                                 constraintName="fk_user_events_users"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+
+</databaseChangeLog>
