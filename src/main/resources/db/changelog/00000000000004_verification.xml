@@ -1,0 +1,82 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="000000000000004-account-verifications" author="solon">
+        <createTable tableName="account_verifications">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="url" type="varchar(256)"/>
+            <column name="created_date" type="datetime"/>
+        </createTable>
+
+        <addUniqueConstraint
+                columnNames="user_id, url"
+                constraintName="uq_account_verification_user_id_url"
+                tableName="account_verifications"
+        />
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="account_verifications"
+                                 constraintName="fk_account_verifications_users"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+
+    <changeSet id="000000000000004-reset-password-verification" author="solon">
+        <createTable tableName="reset_password_verifications">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="url" type="varchar(256)"/>
+            <column name="expiration_date" type="datetime"/>
+        </createTable>
+
+        <addUniqueConstraint
+                columnNames="user_id, url"
+                constraintName="uq_reset_password_verifications_user_id_url"
+                tableName="reset_password_verifications"
+        />
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="reset_password_verifications"
+                                 constraintName="fk_reset_password_verifications_users"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+
+    <changeSet id="000000000000004-two-factor-verification" author="solon">
+        <createTable tableName="two_factor_verifications">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="varchar(10)"/>
+            <column name="expiration_date" type="datetime"/>
+        </createTable>
+
+        <addUniqueConstraint
+                columnNames="user_id, code"
+                constraintName="uq_two_factor_verifications_user_id_code"
+                tableName="two_factor_verifications"
+        />
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="two_factor_verifications"
+                                 constraintName="fk_two_factor_verifications_users"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+
+</databaseChangeLog>
