@@ -1,5 +1,9 @@
-FROM  maven:3.6-openjdk-17-slim as builder
+FROM  maven:3-eclipse-temurin-21 as builder
 WORKDIR application
+COPY pom.xml /application
+RUN mvn dependency:resolve
+COPY . /application
+RUN mvn clean package -DskipTests -X
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
